@@ -1,0 +1,17 @@
+
+services:
+  - type: web
+    name: goofy-culture
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: TOKEN
+        sync: false
+      - key: ADMIN_ID
+        sync: false
+      - key: WEBAPP_URL
+        value: https://goofy-culture.onrender.com/
+      - key: PORT
+        value: 10000
+    # Для постоянства товаров подключи Disk в Render Dashboard -> Disks -> Mount Path /app/data и поменяй DATA_DIR на /app/data
