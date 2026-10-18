@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="ru"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Goofy Culture BOX</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box;margin:0}body{background:#fff;color:#111;font-family:'JetBrains Mono',monospace;overflow-x:hidden;padding-bottom:90px}
+.wrap{max-width:480px;margin:0 auto;background:#fff}
+.banner{width:100%;display:block;border-bottom:3.5px solid #111;cursor:pointer}
+.head{padding:14px;text-align:center;font-weight:900;border-bottom:3.5px solid #111;letter-spacing:1px;font-size:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;background:#fff}
+.card{border:2.5px solid #111;border-radius:16px;padding:8px;background:#fff;position:relative;overflow:hidden;cursor:pointer}
+.pic{aspect-ratio:1;background:#e8dcc3 url('https://i.ibb.co/3Yq5v5Y/craft.jpg');background-size:cover;border-radius:12px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border:2px solid #111}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.brand{font-size:9px;opacity:.6;font-weight:900;margin-top:7px;letter-spacing:1px;text-transform:uppercase}
+.name{font-size:12px;font-weight:900;line-height:1.2;height:28px;overflow:hidden;margin-top:2px}
+.price{background:#111;color:#fff;padding:7px 11px;border-radius:9px;display:inline-block;font-weight:900;font-size:11px;margin-top:8px}
+.price.sold{background:#ff1a1a;transform:rotate(-2deg);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{transform:rotate(-2deg) scale(1)}50%{transform:rotate(-2deg) scale(1.07)}}
+.dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:2}
+.dot{width:6px;height:6px;border-radius:50%;background:#fff;border:1.5px solid #111;opacity:.6}
+.dot.active{opacity:1;background:#111}
+.sold-badge{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) rotate(-12deg);background:#ff1a1a;color:#fff;font-weight:900;padding:6px 10px;font-size:12px;border:2.5px solid #111;animation:pulse 1.8s infinite;z-index:3;text-align:center;line-height:1.1}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:3.5px solid #111;border-radius:22px 22px 0 0;display:flex;justify-content:space-around;align-items:flex-end;padding:10px 0 14px;text-align:center;z-index:20}
+.nav-item{cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:80px}
+.icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:2.5px solid #111;border-radius:10px;background:#fff;font-size:22px}
+.icon.box.jump{animation:jump .5s ease;background:#111;color:#fff}
+@keyframes jump{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#modal,#cartModal,#receiptModal{position:fixed;inset:0;background:#fff;z-index:99;display:none;overflow:auto;max-width:480px;margin:0 auto;border-left:3px solid #111;border-right:3px solid #111}
+.gal{display:flex;gap:0;overflow:hidden;position:relative}
+.gal-track{display:flex;transition:transform .3s ease;width:100%}
+.gal-track img{flex:0 0 100%;aspect-ratio:1;object-fit:cover;background:#e8dcc3}
+.btn{width:100%;padding:18px;border-radius:14px;font-weight:900;border:3px solid #111;background:#111;color:#fff;font-size:14px;cursor:pointer;transition:.2s}
+.btn:disabled{background:#9a9a9a;border-color:#9a9a9a;color:#ddd;cursor:not-allowed}
+.btn.added{background:#fff;color:#111;border:3px dashed #111}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:#111;color:#fff;padding:12px 20px;border-radius:12px;font-weight:900;font-size:12px;z-index:100;opacity:0;transition:.4s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.flex-box{border:2.5px solid #111;border-radius:14px;padding:12px;margin:10px;background:#fff}
+.flex-bar{height:18px;border:2px solid #111;border-radius:10px;overflow:hidden;background:#fff;margin:8px 0}
+.flex-fill{height:100%;background:#111;transition:width .5s}
+.promo{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#ff0;border:3px solid #111;padding:8px 14px;font-weight:900;display:none;z-index:110;font-size:12px}
+.promo.show{display:block}
+.receipt{border:3px dashed #111;padding:14px;font-size:12px;line-height:1.4;margin:12px}
+.qr{display:grid;grid-template-columns:repeat(6, 1fr);gap:4px;max-width:180px;margin:12px auto}
+.qr div{height:18px;background:#111}
+.secret-tip{position:absolute;bottom:8px;right:8px;background:#111;color:#fff;font-size:9px;padding:3px 6px;transform:rotate(-3deg)}
+</style></head><body>
+<div class="wrap">
+<img src="/static/banner.jpg.WEBP" class="banner" id="banner" onerror="this.src='banner.jpg.WEBP'">
+<div class="head">КАТАЛОГ • FLEX ONLY <span id="count" style="opacity:.6;margin-left:6px"></span></div>
+<div class="grid" id="grid"></div>
+</div>
+<div class="nav">
+<div class="nav-item" onclick="closeAll();window.scrollTo(0,0)"><div class="icon">⊞</div><b>Каталог</b></div>
+<div class="nav-item" onclick="openCart()"><div class="icon box" id="boxIcon">👜</div><b id="cartCount">Коробка</b></div>
+<div class="nav-item" onclick="Telegram.WebApp.close()"><div class="icon">×</div><b>Закрыть</b></div>
+</div>
+<div class="toast" id="toast">В КОРОБКЕ 📦</div>
+<div class="promo" id="promo">🎁 GOOFY15 -15% активирован!</div>
+<div id="modal"></div>
+<div id="cartModal"></div>
+<div id="receiptModal"></div>
+<script>
+let P=[], CART=[], promo=false, tapCount=0
+try{CART=JSON.parse(localStorage.getItem('goofy_v5')||'[]')}catch(e){CART=[]}
+const tg=Telegram.WebApp; tg.ready(); tg.expand()
+const banner=document.getElementById('banner')
+banner.addEventListener('click',()=>{tapCount++; if(tapCount>=5){promo=true; document.getElementById('promo').classList.add('show'); setTimeout(()=>document.getElementById('promo').classList.remove('show'),3500); if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success'); tapCount=0} setTimeout(()=>tapCount=0,3000)})
+if(new URLSearchParams(location.search).get('promo')==='GOOFY15'){promo=true; document.getElementById('promo').classList.add('show')}
+
+function toast(m){let t=document.getElementById('toast');t.innerText=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function jumpBox(){let b=document.getElementById('boxIcon');b.classList.add('jump');setTimeout(()=>b.classList.remove('jump'),500)}
+
+async function load(){
+ try{let r=await fetch('/api/products'); P=await r.json()}catch(e){P=[]}
+ document.getElementById('count').innerText=P.length+' товара'
+ document.getElementById('grid').innerHTML=P.map(p=>{
+   let imgs=p.image_urls||[]
+   let first=imgs[0]||''
+   let dots=imgs.map((_,i)=>`<div class="dot ${i==0?'active':''}"></div>`).join('')
+   let sold=p.status==='sold'?`<div class="sold-badge">СПИЗДИЛИ?<br>САМ ВИНОВАТ!</div>`:''
+   let price=promo?Math.round(p.price*0.85):p.price
+   return `<div class="card" onclick="openM(${p.id})">
+    <div class="pic"><img src="${first}" loading="lazy">${sold}<div class="dots">${dots}</div></div>
+    <div class="brand">${(p.brand||'GOOFY').toUpperCase()}</div>
+    <div class="name">${p.name}</div>
+    <div class="price ${p.status==='sold'?'sold':''}">${p.status==='sold'?'СПИЗДИЛИ? САМ ВИНОВАТ!':price+'₽'}</div>
+   </div>`
+ }).join('') || '<div style="grid-column:1/3;text-align:center;padding:40px;border:2.5px dashed #111;border-radius:16px">ПУСТО<br>Добавь через /add</div>'
+ updCart()
+}
+
+let curId=null, curIdx=0
+function openM(id){
+ let p=P.find(x=>x.id==id); if(!p) return; curId=id; curIdx=0
+ let imgs=p.image_urls||[]
+ let track=imgs.map(u=>`<img src="${u}">`).join('')
+ let dots=imgs.map((_,i)=>`<div class="dot ${i==0?'active':''}" onclick="event.stopPropagation();goGal(${i})"></div>`).join('')
+ let price=promo?Math.round(p.price*0.85):p.price
+ let btn=p.status==='sold'?`<button disabled class="btn">УЖЕ СПИЗДИЛИ 🔥</button>`:`<button class="btn" id="addBtn" onclick="addCart(${p.id})">В КОРЗИНУ — ${price}₽</button>`
+ let desc=p.desc?`<div style="margin:10px 0;padding:10px;background:#f7f3e8;border:1.5px dashed #111;font-size:12px">${p.desc}</div>`:''
+ document.getElementById('modal').innerHTML=`
+  <div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3.5px solid #111"><b>${p.brand||''}</b><span onclick="document.getElementById('modal').style.display='none'" style="font-size:26px;cursor:pointer">✕</span></div>
+  <div class="gal" id="gal"><div class="gal-track" id="galTrack" style="transform:translateX(0)">${track}</div><div class="dots" style="bottom:10px">${dots}</div></div>
+  <div style="padding:14px"><h3 style="font-family:monospace">${p.name}</h3><div style="opacity:.6;font-size:11px;margin:6px 0">Размер: ${p.sizes||''}</div>${desc}<h2 style="margin:12px 0">${price}₽ ${promo?`<span style="font-size:11px;color:red;text-decoration:line-through">${p.price}₽</span>`:''}</h2>${btn}</div>`
+ document.getElementById('modal').style.display='block'
+ // swipe for modal
+ let sx=0
+ let gal=document.getElementById('gal')
+ gal.addEventListener('touchstart',e=>sx=e.touches[0].clientX)
+ gal.addEventListener('touchend',e=>{let dx=e.changedTouches[0].clientX-sx; if(dx<-30) goGal(curIdx+1); if(dx>30) goGal(curIdx-1)})
+}
+function goGal(n){
+ let p=P.find(x=>x.id==curId); if(!p) return
+ let imgs=p.image_urls||[]
+ curIdx=Math.max(0,Math.min(n, imgs.length-1))
+ document.getElementById('galTrack').style.transform=`translateX(-${curIdx*100}%)`
+ document.querySelectorAll('#modal .dot').forEach((d,i)=>d.classList.toggle('active',i==curIdx))
+}
+
+function addCart(id){
+ if(CART.includes(id)){toast('УЖЕ В КОРОБКЕ'); return}
+ CART.push(id); localStorage.setItem('goofy_v5', JSON.stringify(CART)); jumpBox(); toast('В КОРОБКЕ 📦'); updCart()
+ let b=document.getElementById('addBtn'); if(b){b.innerText='ДОБАВЛЕНО ✓'; b.classList.add('added')}
+}
+
+function updCart(){
+ let count=CART.length
+ document.getElementById('cartCount').innerText=`Коробка (${count})`
+}
+
+function openCart(){
+ let items=P.filter(p=>CART.includes(p.id))
+ let total=items.reduce((a,c)=>a+(promo?Math.round(c.price*0.85):c.price),0)
+ let flex=Math.min(100, items.length*35)
+ let flexText=flex==0?'БОМЖ 100% / FLEX 0% — пока пусто': flex<35?`БОМЖ ${100-flex}% / FLEX ${flex}% — разгон` : flex<70?`БОМЖ ${100-flex}% / FLEX ${flex}% — норм` : flex<100?`БОМЖ ${100-flex}% / FLEX ${flex}% — флекс` : 'БОМЖ 0% / FLEX 100% — ULTRA FLEX 🔥'
+ let html=items.map(c=>{
+   let price=promo?Math.round(c.price*0.85):c.price
+   return `<div style="display:flex;gap:10px;border:2.5px solid #111;border-radius:14px;padding:10px;margin:10px"><img src="${(c.image_urls||[])[0]||''}" style="width:72px;height:72px;border-radius:10px;border:2px solid #111;object-fit:cover"><div style="flex:1"><b style="font-size:12px">${c.name}</b><br>${price}₽<br><span onclick="CART=CART.filter(x=>x!=${c.id});localStorage.setItem('goofy_v5',JSON.stringify(CART));openCart();updCart()" style="color:red;cursor:pointer;font-size:12px">[удалить]</span></div></div>`
+ }).join('')||'<div style="padding:20px;text-align:center">Пусто, бро</div>'
+ let btnDisabled=items.length==0?'disabled':''
+ document.getElementById('cartModal').innerHTML=`
+  <div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3.5px solid #111"><b>КОРОБКА • ${items.length}</b><span onclick="document.getElementById('cartModal').style.display='none'" style="font-size:26px;cursor:pointer">✕</span></div>
+  <div class="flex-box"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR</span><span>${flex}%</span></div><div class="flex-bar"><div class="flex-fill" style="width:${flex}%"></div></div><div style="font-size:11px">${flexText}</div></div>
+  <div>${html}</div>
+  <div style="padding:14px"><div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px"><span>ИТОГО</span><span>${total}₽</span></div><button class="btn" ${btnDisabled} id="orderBtn" style="margin-top:12px" onclick="showReceipt()">ОФОРМИТЬ • ${total}₽</button>
+  <div style="border:2.5px solid #111;border-radius:14px;padding:14px;margin-top:16px;background:#fff"><div style="text-align:center;font-weight:900;margin-bottom:10px;font-size:13px">ЧТО БУДЕТ ДАЛЬШЕ? 👇</div>
+  <div style="display:flex;gap:10px;margin-bottom:10px"><div style="background:#111;color:#fff;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">1</div><div><b style="font-size:12px">ЖМЕШЬ ОФОРМИТЬ</b><div style="font-size:11px;opacity:.6">Заявка улетает к нам в телегу</div></div></div>
+  <div style="display:flex;gap:10px;margin-bottom:10px"><div style="border:2px solid #111;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">2</div><div><b style="font-size:12px">ПИШЕТ ТИП ИЗ GOOFY</b><div style="font-size:11px;opacity:.6">Уточнит размер, адрес</div></div></div>
+  <div style="display:flex;gap:10px"><div style="border:2px solid #111;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">3</div><div><b style="font-size:12px">ОТПРАВЛЯЕМ ЗА ДЕНЬ 📦</b><div style="font-size:11px;opacity:.6">СДЭК 300-500₽ • По Салавату бесплатно</div></div></div>
+  </div></div>`
+ document.getElementById('cartModal').style.display='block'
+}
+
+function showReceipt(){
+ let items=P.filter(p=>CART.includes(p.id))
+ let total=items.reduce((a,c)=>a+(promo?Math.round(c.price*0.85):c.price),0)
+ let date=new Date().toLocaleString('ru-RU')
+ document.getElementById('receiptModal').innerHTML=`
+  <div class="receipt">
+    <h2 style="text-align:center">ООО "GOOFY BOX"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</h2>
+    <div style="border-top:2px dashed #111;margin:10px 0"></div>
+    КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: ${date}<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ
+    <div style="border-top:1px dashed #111;margin:10px 0"></div>
+    ${items.map(p=>`${p.name}<br>${p.brand||''} ${p.sizes||''} — ${promo?Math.round(p.price*0.85):p.price}₽`).join('<br>')}
+    <div style="border-top:1px dashed #111;margin:10px 0"></div>
+    ПАКЕТ GOOFY CRACK (КРАФТ) 15₽<br>НАКЛЕЙКА В ПОДАРОК 0₽<br>ДОСТАВКА ~400₽
+    <div style="border-top:2px dashed #111;margin:10px 0"></div>
+    <div style="display:flex;justify-content:space-between;font-weight:900;font-size:16px"><span>ИТОГО ФЛЕКС:</span><span>${total}₽</span></div>
+    <div style="border-top:2px dashed #111;margin:10px 0"></div>
+    <div style="text-align:center;font-size:10px">ФЛЕКС НАЧИСЛЕН: +${Math.round(total/100)} БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ:</div>
+    <div class="qr">${Array(18).fill(0).map(()=>'<div></div>').join('')}</div>
+    <div style="text-align:center;font-size:10px">СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI</div>
+  </div>
+  <div style="padding:14px"><button class="btn" onclick="confirmOrder()">ОК, ПОНЯЛ 👌</button></div>`
+ document.getElementById('receiptModal').style.display='block'
+}
+async function confirmOrder(){
+ let items=P.filter(p=>CART.includes(p.id))
+ let total=items.reduce((a,c)=>a+(promo?Math.round(c.price*0.85):c.price),0)
+ let u=tg.initDataUnsafe?.user||{}
+ try{ await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,promo:promo?'GOOFY15':null})}) }catch(e){}
+ document.getElementById('receiptModal').style.display='none'; document.getElementById('cartModal').style.display='none'
+ CART=[]; localStorage.setItem('goofy_v5',JSON.stringify(CART)); updCart(); toast('ЗАКАЗ УЛЕТЕЛ!')
+ if(tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success')
+}
+function closeAll(){document.getElementById('modal').style.display='none';document.getElementById('cartModal').style.display='none';document.getElementById('receiptModal').style.display='none'}
+load()
+</script></body></html>
