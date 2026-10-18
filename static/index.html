@@ -274,26 +274,33 @@ async function checkout(){
  let u = getTgUser();
  let date = new Date().toLocaleString('ru-RU');
  let list = items.map(p=>'<div style="display:flex;justify-content:space-between;margin:4px 0"><span>'+(p.brand||'')+' '+p.name.slice(0,18)+'</span><span>'+p.price+'₽</span></div>').join('');
- let receiptHtml = '<div style="padding:20px 12px;text-align:center;background:#fff;color:#111;min-height:80vh"><div style="font-size:10px;font-weight:900;border:1px solid #111;display:inline-block;padding:4px 8px">RECEIPT<br><span style="font-size:7px;opacity:.5">JUL 17<br>MISFITS...........0.00<br>SQUARE...........0.00<br>PEGS.............0.00<br>ROUND............0.00<br>HOLES............0.00</span></div><div style="border:3px dashed #111;padding:14px;margin:14px 0;border-radius:4px;text-align:left;background:#fff"><div style="text-align:center;font-weight:900;font-size:14px;line-height:1.1">ООО \"GOOFY BOX\"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed #111;margin:10px 0"></div>'+list+'<div style="border-top:1px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ПАКЕТ GOOFY CRACK (КРАФТ)</span><span>15₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>НАКЛЕЙКА В ПОДАРОК</span><span>0₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ДОСТАВКА (ПРЕДВАРИТ)</span><span>~400₽</span></div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>ИТОГО ФЛЕКС:</span><span>'+total+'₽</span></div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="text-align:center;font-size:9px;line-height:1.3;opacity:.7">ФЛЕКС НАЧИСЛЕН: +'+Math.round(total/10)+' БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ ПОДЛИННОСТИ:<br><div style="font-size:18px;margin:8px 0;line-height:0.9">▓▓▓▓ ░▓ ▓▓▓▓<br>░▓░▓ ▓▓▓▓ ░▓░▓<br>▓▓▓▓ ░▓░░ ▓▓▓▓</div>СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI</div></div><button class="btn" style="margin-top:20px;background:#111;color:#fff;border-color:#111;padding:18px;font-size:16px" onclick="vib();closeReceipt()">ОК, ПОНЯЛ 👌</button></div>';
+ let receiptHtml = '<div style="padding:20px 12px;text-align:center;background:#fff;color:#111;min-height:80vh"><div style="font-size:10px;font-weight:900;border:1px solid #111;display:inline-block;padding:4px 8px">RECEIPT<br><span style="font-size:7px;opacity:.5">JUL 17<br>MISFITS...........0.00<br>SQUARE...........0.00<br>PEGS.............0.00<br>ROUND............0.00<br>HOLES............0.00</span></div><div style="border:3px dashed #111;padding:14px;margin:14px 0;border-radius:4px;text-align:left;background:#fff"><div style="text-align:center;font-weight:900;font-size:14px;line-height:1.1">ООО \"GOOFY BOX\"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed #111;margin:10px 0"></div>'+list+'<div style="border-top:1px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ПАКЕТ GOOFY CRACK (КРАФТ)</span><span>15₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>НАКЛЕЙКА В ПОДАРОК</span><span>0₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ДОСТАВКА (ПРЕДВАРИТ)</span><span>~400₽</span></div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>ИТОГО ФЛЕКС:</span><span>'+total+'₽</span></div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="text-align:center;font-size:9px;line-height:1.3;opacity:.7">ФЛЕКС НАЧИСЛЕН: +'+Math.round(total/10)+' БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ ПОДЛИННОСТИ:<br><div style="font-size:18px;margin:8px 0;line-height:0.9">▓▓▓▓ ░▓ ▓▓▓▓<br>░▓░▓ ▓▓▓▓ ░▓░▓<br>▓▓▓▓ ░▓░░ ▓▓▓▓</div>СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI</div></div><button class="btn" id="okBtn" style="margin-top:20px;background:#111;color:#fff;border-color:#111;padding:18px;font-size:16px;width:100%;border-radius:12px;font-weight:900" onclick="closeReceipt()">ОК, ПОНЯЛ 👌</button></div>';
 
- // показываем чек - он остается висеть
+ // показываем чек - он остается
  document.getElementById('cartModal').innerHTML = receiptHtml;
  boom();
+ vib('ok');
 
- // отправляем заказ в фоне, но не очищаем корзину до нажатия ОК
+ // сохраняем данные заказа чтобы отправить при нажатии ОК
+ window._pendingOrder = {items:items.map(p=>p.id), total:total, discount:DISCOUNT?10:0, promo:DISCOUNT?"GOOFY10":"", mode:MODE, user:u, from_id: u?u.id:0, date:date};
+
+ // отправляем через API (не через sendData чтобы не закрывать приложение)
  try{
-   let sendData = {items:items.map(p=>p.id), total:total, discount:DISCOUNT?10:0, promo:DISCOUNT?"GOOFY10":"", mode:MODE, user:u, from_id: u?u.id:0};
-   if(tg && tg.sendData){
-     setTimeout(()=>{ try{ tg.sendData(JSON.stringify(sendData)); }catch(e){} }, 300);
-   }
-   await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sendData)});
+   await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(window._pendingOrder)});
  }catch(e){ console.log(e); }
 }
 
 function closeReceipt(){
   vib('ok');
+  // теперь можно отправить в бота если нужно, но уже после клика ОК
+  try{
+    if(window._pendingOrder && tg && tg.sendData){
+      tg.sendData(JSON.stringify(window._pendingOrder));
+    }
+  }catch(e){}
   CART=[];
   DISCOUNT=0;
+  window._pendingOrder=null;
   save();
   closeAll();
   load();
