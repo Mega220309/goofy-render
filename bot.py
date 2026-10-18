@@ -135,10 +135,19 @@ async def start(m:Message):
     await load_all()
     url = WEBAPP_URL or f"https://{os.getenv('RENDER_EXTERNAL_HOSTNAME','')}"
     from aiogram.utils.keyboard import InlineKeyboardBuilder
-    kb = InlineKeyboardBuilder()
-    if url:
-        kb.button(text="📦 ОТКРЫТЬ КОРОБКУ", web_app=WebAppInfo(url=url))
-    await m.answer(f"Goofy BOX • {len(get_products())} товара\nОблако: {'✅ '+NPOINT_ID if NPOINT_ID else '❌ нет NPOINT_ID - товары пропадут!'}", reply_markup=kb.as_markup() if url else None)
+    from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+    # Делаем как на втором фото - дерзкий текст + большая кнопка снизу
+    kb = ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="📦 ОТКРЫТЬ КОРОБКУ", web_app=WebAppInfo(url=url))]] if url else [[KeyboardButton(text="📦 ОТКРЫТЬ КОРОБКУ")]],
+        resize_keyboard=True
+    )
+    # Текст как на втором фото
+    text = (
+        "ЙОУ! Это GOOFY CULTURE SHOP\n\n"
+        "Жми кнопку ниже чтобы открыть коробку 👇\n\n"
+        "Аху*нный товар, только оригинал."
+    )
+    await m.answer(text, reply_markup=kb)
 
 @dp.message(Command("add"))
 async def a0(m:Message, state:FSMContext):
@@ -258,11 +267,80 @@ async def autoclean():
 @dp.message(F.web_app_data)
 async def webapp_data(m:Message):
     try:
-        data=json.loads(m.web_app_data.data)
-        await bot.send_message(ADMIN_ID, f"📦 НОВЫЙ ЗАКАЗ!\nОт: @{m.from_user.username} {m.from_user.id}\n{json.dumps(data, ensure_ascii=False)[:1500]}")
-        await m.answer("Заказ принят!")
+        raw = json.loads(m.web_app_data.data)
+        # raw can be {items: [...], total, discount, promo} or {cart, promo}
+        items_ids = raw.get("items") or raw.get("cart") or raw.get("order") or []
+        if isinstance(items_ids, list) and len(items_ids)>0 and isinstance(items_ids[0], dict):
+            # already objects
+            items_ids = [x.get("id") or x for x in items_ids]
+        total = raw.get("total", 0)
+        discount = raw.get("discount", 0)
+        promo = raw.get("promo") or ("GOOFY10" if discount else None)
+        
+        # get products info
+        ps = get_products()
+        prods = []
+        for pid in items_ids:
+            p = next((x for x in ps if str(x["id"])==str(pid) or x["id"]==pid), None)
+            if p:
+                prods.append(p)
+        
+        # calc if total not provided
+        if not total and prods:
+            total = sum(p["price"] for p in prods)
+            if discount:
+                total = round(total*0.9)
+            if promo=="GOOFY15":
+                total = round(total*0.85)
+
+        user = m.from_user
+        username = f"@{user.username}" if user.username else "без юзера"
+        name = f"{user.first_name or ''} {user.last_name or ''}".strip() or "Гость"
+        
+        # Build pretty message
+        lines = []
+        lines.append("📦 <b>НОВЫЙ ЗАКАЗ — GOOFY BOX</b>")
+        lines.append("")
+        lines.append(f"👤 <b>Клиент:</b> {name} {username}")
+        lines.append(f"🆔 ID: <code>{user.id}</code>")
+        lines.append(f"🔗 <a href='tg://user?id={user.id}'>Написать клиенту</a>")
+        lines.append("")
+        lines.append("🛒 <b>Товары:</b>")
+        for i,p in enumerate(prods,1):
+            lines.append(f"{i}. <b>{p.get('brand','')} {p.get('name','')}</b>")
+            lines.append(f"   Размер: {p.get('size','?')} | Цена: {p.get('price',0)}₽")
+            if p.get('tag'): lines.append(f"   Тэг: {p.get('tag')}")
+        if not prods:
+            lines.append(f"ID товаров: {items_ids}")
+        lines.append("")
+        lines.append(f"💰 <b>Итого:</b> {total}₽")
+        if discount or promo:
+            lines.append(f"🎁 <b>Скидка:</b> {discount}% {f'({promo})' if promo else ''} — ПРИМЕНЕНА")
+        else:
+            lines.append(f"🎁 <b>Скидка:</b> нет")
+        lines.append("")
+        lines.append(f"⏰ {time.strftime('%d.%m.%Y %H:%M')}")
+
+        txt = "\n".join(lines)
+        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML")
+        # Also send product photos as album if exists
+        if prods:
+            from aiogram.types import InputMediaPhoto
+            media = []
+            for p in prods[:10]:
+                fid = p.get("img") or (p.get("images",[None])[0] if p.get("images") else None)
+                if fid:
+                    media.append(InputMediaPhoto(media=fid, caption=f"{p.get('brand','')} {p.get('name','')} {p.get('price',0)}₽"))
+            if media:
+                try:
+                    await bot.send_media_group(ADMIN_ID, media)
+                except Exception as e:
+                    print(f"media group fail {e}")
+        await m.answer("✅ Заказ улетел! Я напишу тебе в личку 👟")
     except Exception as e:
-        print(e)
+        print(f"webapp_data error {e}")
+        import traceback; traceback.print_exc()
+        await m.answer("Ошибка заказа")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -289,10 +367,63 @@ async def api_file(file_id: str):
 
 @app.post("/api/order")
 async def api_order(req: Request):
-    data = await req.json()
     try:
-        await bot.send_message(ADMIN_ID, f"📦 ЗАКАЗ WebApp\n{json.dumps(data, ensure_ascii=False)[:1000]}")
-    except: pass
+        data = await req.json()
+        user = data.get("user",{})
+        items_ids = data.get("items") or data.get("cart") or []
+        total = data.get("total",0)
+        discount = data.get("discount",0)
+        promo = data.get("promo")
+
+        ps = get_products()
+        prods = []
+        for pid in items_ids:
+            p = next((x for x in ps if str(x["id"])==str(pid) or x["id"]==pid), None)
+            if p:
+                prods.append(p)
+
+        uid = user.get("id",0)
+        uname = user.get("username")
+        first = user.get("first_name","")
+        last = user.get("last_name","")
+        name = f"{first} {last}".strip() or "Гость"
+        username = f"@{uname}" if uname else "без юзера"
+
+        lines = []
+        lines.append("📦 <b>НОВЫЙ ЗАКАЗ — GOOFY BOX (WebApp)</b>")
+        lines.append("")
+        lines.append(f"👤 <b>Клиент:</b> {name} {username}")
+        lines.append(f"🆔 ID: <code>{uid}</code>")
+        if uid:
+            lines.append(f"🔗 <a href='tg://user?id={uid}'>Написать клиенту</a>")
+        lines.append("")
+        lines.append("🛒 <b>Товары:</b>")
+        for i,p in enumerate(prods,1):
+            lines.append(f"{i}. <b>{p.get('brand','')} {p.get('name','')}</b> — {p.get('price',0)}₽ (Размер: {p.get('size','?')})")
+        if not prods:
+            lines.append(f"ID: {items_ids}")
+        lines.append("")
+        lines.append(f"💰 <b>Итого:</b> {total}₽")
+        if discount or promo:
+            lines.append(f"🎁 <b>Скидка:</b> {discount}% {promo or ''} — ПРИМЕНЕНА")
+        else:
+            lines.append("🎁 <b>Скидка:</b> нет")
+        lines.append(f"⏰ {time.strftime('%d.%m.%Y %H:%M')}")
+        txt = "\n".join(lines)
+        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML")
+        if prods:
+            from aiogram.types import InputMediaPhoto
+            media=[]
+            for p in prods[:10]:
+                fid=p.get("img") or (p.get("images",[None])[0] if p.get("images") else None)
+                if fid:
+                    media.append(InputMediaPhoto(media=fid, caption=f"{p.get('brand','')} {p.get('name','')}"))
+            if media:
+                try:
+                    await bot.send_media_group(ADMIN_ID, media)
+                except: pass
+    except Exception as e:
+        print(f"api_order error {e}")
     return {"ok": True}
 
 @app.on_event("startup")
