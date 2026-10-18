@@ -115,11 +115,65 @@ function renderCart(){
  items.forEach(async p=>{let fid=(p.images&&p.images[0])?p.images[0]:p.img;if(!fid)return;try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('c_'+p.id);if(el)el.src=jj.url;}catch(e){}});
 }
 function steal(){vib();STEAL++;if(STEAL>=10&&!DISCOUNT){DISCOUNT=1;STEAL=0;toast('СКИДКА 10% УКРАДЕНА!');boom();}else if(STEAL>3){toast(STEAL+'/10');}}
+
+function getTgUser(){
+  try{
+    // 1. Прямой путь
+    if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id){
+      return tg.initDataUnsafe.user;
+    }
+    // 2. Парсим initData строку (самый надежный)
+    if(tg && tg.initData){
+      let params = new URLSearchParams(tg.initData);
+      let userStr = params.get('user');
+      if(userStr){
+        return JSON.parse(userStr);
+      }
+    }
+    // 3. Пробуем из WebApp initDataUnsafe по-другому
+    if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user){
+      return window.Telegram.WebApp.initDataUnsafe.user;
+    }
+  }catch(e){ console.log('getTgUser error', e); }
+  return null;
+}
+
 async function checkout(){
  let items=P.filter(p=>CART.includes(p.id));let total=items.reduce((s,p)=>s+p.price,0);if(DISCOUNT)total=Math.round(total*0.9);
- let u=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)?tg.initDataUnsafe.user:{id:0,first_name:'Гость'};
+ let u = getTgUser();
+ console.log('TG USER:', u, 'initData:', tg ? tg.initData : 'no tg');
+ if(!u || !u.id){
+   // последняя попытка - берем из initData вручную
+   try{
+     let search = window.location.search;
+     if(!u && tg && tg.initDataUnsafe && tg.initDataUnsafe.user){
+       u = tg.initDataUnsafe.user;
+     }
+   }catch(e){}
+ }
+ if(!u){
+   u = {id:0, first_name:"Гость", username:""};
+   // если даже так - все равно пробуем отправить через sendData, бот получит from_user
+   if(tg && tg.sendData){
+     try{
+       tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", via:"sendData_no_user"}));
+       return;
+     }catch(e){}
+   }
+ }
+ // Если юзер есть - отправляем через sendData (тогда бот 100% получит from_user)
+ if(tg && tg.sendData && u && u.id && u.id!=0){
+   try{
+     console.log('Sending via sendData', u);
+     tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", user:u}));
+     return;
+   }catch(e){
+     console.log("sendData fail, fallback to fetch",e);
+   }
+ }
+ // Fallback - через API
  try{
-  let res=await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,discount:DISCOUNT?10:0})});
+  let res=await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", from_id: u.id})});
   if(res.ok){
    let date = new Date().toLocaleString('ru-RU');
    let list = items.map(p=>'<div style="display:flex;justify-content:space-between;margin:3px 0"><span>'+p.name.slice(0,20)+'</span><span>'+p.price+'₽</span></div>').join('');
@@ -128,6 +182,7 @@ async function checkout(){
   }else{alert('Ошибка');}
  }catch(e){alert('Сеть');}
 }
+
 let stealthTimer;
 function resetStealth(){clearTimeout(stealthTimer);document.getElementById('stealthOverlay').style.display='none';stealthTimer=setTimeout(()=>{document.getElementById('stealthOverlay').style.display='flex';},60000);}
 function hideStealth(){vib();document.getElementById('stealthOverlay').style.display='none';resetStealth();}
