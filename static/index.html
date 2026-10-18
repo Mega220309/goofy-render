@@ -1,33 +1,32 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GC BOX</title><script src="https://telegram.org/js/telegram-web-app.js"></script><style>
-*{box-sizing:border-box;margin:0}body{background:#fff;color:#111;font-family:monospace;overflow-x:hidden}
-.wrap{max-width:480px;margin:0 auto;padding-bottom:110px}
-.banner{width:100%;display:block;border-bottom:3px solid #111;background:#f2f2f2}
-.head{padding:14px;text-align:center;font-weight:900;border-bottom:3px solid #111}
+*{box-sizing:border-box;margin:0}body{background:#fff;color:#111;font-family:monospace;overflow-x:hidden;transition:background .3s,color .3s}
+.wrap{max-width:480px;margin:0 auto;padding-bottom:110px;transition:all .3s}
+.banner{width:100%;display:block;border-bottom:3px solid #111;background:#f2f2f2;transition:all .3s}
+.head{padding:14px;text-align:center;font-weight:900;border-bottom:3px solid #111;transition:all .3s}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.card{border:2.5px solid #111;border-radius:16px;padding:8px;background:#fff}
+.card{border:2.5px solid #111;border-radius:16px;padding:8px;background:#fff;transition:all .3s}
 .pic{aspect-ratio:1;background:#eee;border-radius:12px;overflow:hidden;position:relative}
 .pic img{width:100%;height:100%;object-fit:cover}
-.price{background:#111;color:#fff;padding:6px 9px;border-radius:8px;display:inline-block;font-weight:900;font-size:11px;margin-top:6px}
+.price{background:#111;color:#fff;padding:6px 9px;border-radius:8px;display:inline-block;font-weight:900;font-size:11px;margin-top:6px;transition:all .3s}
 .tag{position:absolute;top:6px;left:6px;background:#fff;border:2px solid #111;border-radius:6px;padding:2px 6px;font-size:9px;font-weight:900;z-index:2}
-.tag +.tag{top:28px}
-.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:3.5px solid #111;display:flex;justify-content:space-around;padding:12px 0 18px 0;z-index:999;border-radius:22px 22px 0 0}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:3.5px solid #111;display:flex;justify-content:space-around;padding:12px 0 18px 0;z-index:999;border-radius:22px 22px 0 0;transition:all .3s}
 .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;min-width:80px}
-.icon{width:46px;height:46px;border:3px solid #111;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;background:#fff;font-size:22px;line-height:1}
+.icon{width:46px;height:46px;border:3px solid #111;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;background:#fff;font-size:22px;line-height:1;transition:all .3s}
 .icon.box{position:relative}
-.icon.box:before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:18px;height:9px;border:3px solid #111;border-bottom:0;border-radius:6px 6px 0 0;background:#fff}
-.icon.box.jump{animation:jump.5s}
+.icon.box:before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:18px;height:9px;border:3px solid #111;border-bottom:0;border-radius:6px 6px 0 0;background:#fff;transition:all .3s}
+.icon.box.jump{animation:jump .5s}
 @keyframes jump{50%{transform:translateY(-10px)}}
 .nav-label{font-size:14px;font-weight:900;text-align:center;line-height:1}
-#modal,#cartModal{position:fixed;inset:0;background:#fff;z-index:100;display:none;overflow:auto;max-width:480px;margin:0 auto;border-left:3px solid #111;border-right:3px solid #111;padding-bottom:120px}
+#modal,#cartModal{position:fixed;inset:0;background:#fff;z-index:100;display:none;overflow:auto;max-width:480px;margin:0 auto;border-left:3px solid #111;border-right:3px solid #111;padding-bottom:120px;transition:all .3s}
 .gal{display:flex;gap:10px;overflow-x:auto;padding:12px}
 .gal img{flex:0 0 85%;width:85%;aspect-ratio:1;object-fit:cover;border:3px solid #111;border-radius:16px}
-.btn{width:100%;padding:16px;border-radius:12px;font-weight:900;border:3px solid #111;background:#111;color:#fff}
+.btn{width:100%;padding:16px;border-radius:12px;font-weight:900;border:3px solid #111;background:#111;color:#fff;transition:all .3s}
 .btn.added{background:#fff;color:#111;border-style:dashed}
-.btn:active{animation:shakeBtn.2s}
+.btn:active{animation:shakeBtn .2s}
 @keyframes shakeBtn{25%{transform:translateX(-3px) rotate(-1deg)}75%{transform:translateX(3px) rotate(1deg)}}
 .toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-weight:900;opacity:0;transition:.3s;pointer-events:none;z-index:1000;text-align:center;max-width:90%}
 .toast.show{opacity:1}
-.flex{margin:12px;border:2.5px solid #111;border-radius:12px;padding:10px}
+.flex{margin:12px;border:2.5px solid #111;border-radius:12px;padding:10px;transition:all .3s}
 .bar{height:14px;background:#eee;border:2px solid #111;border-radius:7px;overflow:hidden;margin-top:6px}
 .fill{height:100%;background:#111;width:0%;transition:.5s}
 .conf{position:fixed;top:-10px;width:8px;height:12px;background:#111;animation:fall 1.2s linear forwards;pointer-events:none;z-index:1001}
@@ -36,49 +35,166 @@
 .secret{position:absolute;top:0;right:0;padding:14px;opacity:.35;font-size:18px;z-index:5}
 #sniffOverlay{position:fixed;inset:0;background:rgba(255,255,255,0.6);backdrop-filter:blur(12px);z-index:900;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px}
 #stealthOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:800;display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff}
-.receipt{font-family:monospace;background:#fff;border:2.5px dashed #111;padding:14px;margin:12px;border-radius:4px;position:relative}
-.shake{animation:shake.3s}
+.receipt{font-family:monospace;background:#fff;border:2.5px dashed #111;padding:14px;margin:12px;border-radius:4px;position:relative;transition:all .3s}
+.shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+/* TABS - В НАЛИЧИИ / ПОД ЗАКАЗ */
+.tabs{display:flex;gap:0;border-bottom:3.5px solid #111;background:#fff;position:sticky;top:0;z-index:50;transition:all .3s}
+.tab{flex:1;padding:12px 6px;text-align:center;cursor:pointer;border-right:3px solid #111;position:relative;background:#fff;color:#111;transition:all .25s;user-select:none}
+.tab:last-child{border-right:0}
+.tab .big{font-weight:900;font-size:14px;line-height:1.1;letter-spacing:-0.5px;display:block}
+.tab .small{font-weight:700;font-size:10px;opacity:.7;margin-top:2px;display:block}
+.tab.active{background:#111;color:#fff}
+.tab.active .small{opacity:.9}
+.tab.preorder-tab.active{background:#fff;color:#111;border:2px solid #111;box-shadow:inset 0 0 0 2px #111}
+.tab.stock-tab{font-family:monospace;transform:rotate(-0.5deg)}
+.tab.preorder-tab{font-family:monospace;transform:rotate(0.5deg);background:#111;color:#fff}
+
+/* DARK MODE - инверт */
+body.dark{background:#0a0a0a;color:#fff}
+body.dark .wrap{background:#0a0a0a}
+body.dark .banner{border-bottom-color:#fff;filter:invert(0)}
+body.dark .tabs{background:#0a0a0a;border-bottom-color:#fff}
+body.dark .tab{border-color:#fff;background:#0a0a0a;color:#fff}
+body.dark .tab.active{background:#fff;color:#111}
+body.dark .tab.preorder-tab{background:#fff;color:#111}
+body.dark .tab.preorder-tab.active{background:#111;color:#fff;border-color:#fff}
+body.dark .head{border-bottom-color:#fff;color:#fff}
+body.dark .card{background:#111;border-color:#fff;color:#fff}
+body.dark .price{background:#fff;color:#111}
+body.dark .tag{background:#111;color:#fff;border-color:#fff}
+body.dark .nav{background:#0a0a0a;border-top-color:#fff}
+body.dark .icon{background:#111;border-color:#fff;color:#fff}
+body.dark .icon.box:before{background:#111;border-color:#fff}
+body.dark .nav-label{color:#fff}
+body.dark #modal,body.dark #cartModal{background:#0a0a0a;border-color:#fff;color:#fff}
+body.dark .gal img{border-color:#fff}
+body.dark .btn{background:#fff;color:#111;border-color:#fff}
+body.dark .btn.added{background:#111;color:#fff}
+body.dark .toast{background:#fff;color:#111}
+body.dark .flex{border-color:#fff}
+body.dark .bar{background:#222;border-color:#fff}
+body.dark .fill{background:#fff}
+body.dark .receipt{background:#111;border-color:#fff;color:#fff}
+body.dark .banner-wrap{border-bottom-color:#fff}
+
+.banner-img{width:100%;display:block;transition:all .3s}
 </style></head><body>
 <div class="wrap">
 <div class="banner-wrap">
-<img src="/static/banner.jpg.WEBP" onerror="this.src='/static/banner.webp'" class="banner">
+<img id="bannerLight" src="/static/banner.jpg.WEBP" onerror="this.src='/static/banner.webp'; this.onerror=function(){this.src='https://i.ibb.co/0jZ3Qv0/goofy-light.jpg'};" class="banner-img">
+<img id="bannerDark" src="/static/banner_dark.jpg" style="display:none" class="banner-img" onerror="this.style.display='none'">
 <div class="secret" onclick="steal()">✦</div>
 </div>
-<div class="head">КАТАЛОГ</div>
+
+<div class="tabs">
+  <div class="tab stock-tab active" id="tabStock" onclick="switchMode('stock')">
+    <span class="big">В НАЛИЧИИ</span>
+    <span class="small">ТУТ И СЕЙЧАС</span>
+  </div>
+  <div class="tab preorder-tab" id="tabPreorder" onclick="switchMode('preorder')">
+    <span class="big">ПОД ЗАКАЗ</span>
+    <span class="small">ЖДИ КАК ХАТИКО</span>
+  </div>
+</div>
+
+<div class="head" id="catalogHead">КАТАЛОГ</div>
 <div id="grid" class="grid">Загрузка...</div>
 </div>
+
 <div class="nav">
   <div class="nav-item" onclick="vib();closeAll();window.scrollTo(0,0)"><div class="icon">⊞</div><div class="nav-label">Каталог</div></div>
   <div class="nav-item" onclick="vib();openCart()"><div class="icon box" id="boxIcon"></div><div class="nav-label" id="cartCount">Коробка</div></div>
   <div class="nav-item" onclick="vib();if(window.Telegram&&Telegram.WebApp)Telegram.WebApp.close();else window.close()"><div class="icon">×</div><div class="nav-label">Закрыть</div></div>
 </div>
+
 <div class="toast" id="toast"></div>
 <div id="modal"></div>
 <div id="cartModal"></div>
 <div id="sniffOverlay" onclick="this.style.display='none'"><div style="font-size:50px">👃</div><div id="sniffText" style="font-weight:900;font-size:18px;margin-top:12px;border:3px solid #111;background:#fff;padding:12px;border-radius:12px"></div><div style="margin-top:10px;font-size:10px;font-weight:900;opacity:.5">ЖМИ ЧТОБЫ ПЕРЕСТАТЬ НЮХАТЬ</div></div>
 <div id="stealthOverlay" onclick="hideStealth()"><div style="font-size:80px">👁️</div><div style="font-weight:900;font-size:22px;margin-top:10px">ТЫ ЕЩЕ ТУТ?</div></div>
+
 <script>
-let P=[], CART_KEY='goofy_box_v3', CART=[], STEAL=0, DISCOUNT=0;
+let P=[], CART_KEY='goofy_box_v3', CART=[], STEAL=0, DISCOUNT=0, MODE='stock';
 try{CART=JSON.parse(localStorage.getItem(CART_KEY)||'[]')}catch(e){CART=[]}
 CART=CART.map(Number);
 let tg=window.Telegram&&Telegram.WebApp?Telegram.WebApp:null; if(tg){tg.ready();tg.expand();}
 function vib(type){try{if(tg&&tg.HapticFeedback){if(type=='ok')tg.HapticFeedback.notificationOccurred('success');else if(type=='err')tg.HapticFeedback.notificationOccurred('error');else tg.HapticFeedback.impactOccurred('medium');}if(navigator.vibrate)navigator.vibrate(type=='ok'?[50,30,50]:20);}catch(e){}}
 function save(){localStorage.setItem(CART_KEY,JSON.stringify(CART));let el=document.getElementById('cartCount');if(el)el.innerText=CART.length?'Коробка ('+CART.length+')':'Коробка';}
 save();
+
+function getTgUser(){
+  try{
+    if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) return tg.initDataUnsafe.user;
+    if(tg && tg.initData){
+      let params = new URLSearchParams(tg.initData);
+      let userStr = params.get('user');
+      if(userStr) return JSON.parse(userStr);
+    }
+  }catch(e){}
+  return null;
+}
+
+function switchMode(m){
+  MODE=m;
+  vib();
+  document.getElementById('tabStock').classList.toggle('active', m==='stock');
+  document.getElementById('tabPreorder').classList.toggle('active', m==='preorder');
+  document.body.classList.toggle('dark', m==='preorder');
+  let light=document.getElementById('bannerLight');
+  let dark=document.getElementById('bannerDark');
+  if(m==='preorder'){
+    light.style.display='none';
+    dark.style.display='block';
+    document.getElementById('catalogHead').innerText='ПОД ЗАКАЗ • ЖДИ КАК ХАТИКО';
+  }else{
+    light.style.display='block';
+    dark.style.display='none';
+    document.getElementById('catalogHead').innerText='КАТАЛОГ';
+  }
+  load();
+  // confetti when switch to dark
+  if(m==='preorder'){ for(let i=0;i<12;i++){let d=document.createElement('div');d.className='conf';d.style.left=Math.random()*100+'vw';d.style.background='#fff';document.body.appendChild(d);setTimeout(()=>d.remove(),1200);} }
+}
+
 function isSoldProduct(p){ return!p || p.sold || p.is_sold || p.stock===0 || p.quantity===0 || p.available===false; }
+function isPreorderProduct(p){
+  // логика: если у товара есть флаг preorder или тег ПОД ЗАКАЗ
+  if(!p) return false;
+  if(p.preorder===true || p.type==='preorder' || p.is_preorder) return true;
+  let tags = (p.tags||[]).join(' ').toLowerCase() + ' ' + (p.tag||'').toLowerCase() + ' ' + (p.name||'').toLowerCase();
+  if(tags.includes('под заказ') || tags.includes('preorder') || tags.includes('заказ')) return true;
+  return false;
+}
+
 async function load(){
  let g=document.getElementById('grid');
  try{let r=await fetch('/api/products?t='+Date.now());P=await r.json();}catch(e){g.innerHTML='Ошибка';return;}
  CART=CART.filter(id=>P.some(p=>p.id==id));save();
- if(!P.length){g.innerHTML='<div style="grid-column:1/3;text-align:center;padding:30px;border:2px dashed #111;border-radius:12px;font-weight:900">ПУСТО</div>';return;}
- g.innerHTML=P.map(p=>{
+ // фильтруем по режиму
+ let filtered = P.filter(p=>{
+   let pre = isPreorderProduct(p);
+   if(MODE==='stock') return !pre && !isSoldProduct(p);
+   else return pre;
+ });
+ // если в под заказ нет товаров с флагом - показываем заглушку но не ломаем
+ if(!filtered.length){
+   if(MODE==='preorder'){
+     g.innerHTML='<div style="grid-column:1/3;text-align:center;padding:30px;border:2.5px dashed #fff;border-radius:16px;font-weight:900;background:#111;color:#fff"><div style="font-size:28px">⏳</div><div style="margin-top:8px">СКОРО БУДЕТ<br><span style="font-size:10px;opacity:.7">ВЕЩИ КОТОРЫХ НЕТ НО СКОРО БУДУТ<br>ПИШИ @GOOFY_CULTURE</span></div></div>';
+   }else{
+     g.innerHTML='<div style="grid-column:1/3;text-align:center;padding:30px;border:2px dashed #111;border-radius:12px;font-weight:900">ПУСТО</div>';
+   }
+   return;
+ }
+ g.innerHTML=filtered.map(p=>{
   let sold=isSoldProduct(p);
   let tags = (p.tags||[]).map(t=>'<div class="tag">'+t+'</div>').join('') || (p.size?'<div class="tag">'+p.size+'</div>':'');
   return '<div class="card" style="'+(sold?'opacity:.55':'')+'" onclick="vib();openM('+p.id+')"><div class="pic">'+tags+'<img id="im_'+p.id+'">'+(sold?'<div style="position:absolute;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;transform:rotate(-12deg);border:2px dashed #fff;text-align:center">СПИЗДИЛИ</div>':'')+'</div><div style="font-size:10px;opacity:.5;font-weight:900;margin-top:4px">'+(p.brand||'')+'</div><div style="font-size:12px;font-weight:900;height:26px;overflow:hidden">'+p.name+'</div><div class="price">'+p.price+'₽</div></div>'
  }).join('');
- P.forEach(async p=>{let fid=(p.images&&p.images[0])?p.images[0]:p.img;if(!fid)return;try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('im_'+p.id);if(el)el.src=jj.url;}catch(e){}});
+ filtered.forEach(async p=>{let fid=(p.images&&p.images[0])?p.images[0]:p.img;if(!fid)return;try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('im_'+p.id);if(el)el.src=jj.url;}catch(e){}});
 }
+
 function openM(id){
  let p=P.find(x=>x.id==id);if(!p)return;
  let imgs=(p.images&&p.images.length?p.images:[p.img]).filter(Boolean);
@@ -87,97 +203,54 @@ function openM(id){
  let sold=isSoldProduct(p);
  let btnText = sold? 'СПИЗДИЛИ, САМ ВИНОВАТ' : (inCart?'УБРАТЬ ИЗ КОРОБКИ':'ПОЛОЖИТЬ В КОРОБКУ');
  let btnAction = sold? 'vib(\'err\');toast("СПИЗДИЛИ, САМ ВИНОВАТ 💀")' : 'addToBox('+id+')';
- let btnExtraStyle = sold? 'background:#eee;color:#111;opacity:.7;' : '';
  let desc = p.description || p.desc || p.about || '';
- let tagsLine = (p.tags||[]).length? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+(p.tags||[]).map(t=>'<span style="border:2px solid #111;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:900">'+t+'</span>').join('')+'</div>' : '';
- document.getElementById('modal').innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid #111"><b style="font-size:11px;opacity:.6">УЗРИТЕ ЭТОТ ФЛЕЕЕЕЕЕЕКС</b><span onclick="vib();closeAll()" style="font-size:24px;cursor:pointer">✕</span></div><div class="gal">'+gal+'</div><div style="padding:14px"><h2>'+(p.brand||'')+' '+p.name+'</h2>'+tagsLine+'<div style="opacity:.7;margin:6px 0;font-weight:900">'+(p.size||'')+'</div>'+(desc?'<div style="border:2.5px solid #111;border-radius:10px;padding:10px;margin:10px 0;font-size:12px;line-height:1.3;background:#fffaf0"><div style="font-weight:900;margin-bottom:4px">ОПИСАНИЕ ОТ БОМЖА:</div>'+desc+'</div>':'')+'<div style="font-weight:900;font-size:20px;margin:10px 0">'+p.price+'₽</div>'+(sold?'<div style="border:2.5px dashed #111;padding:10px;border-radius:10px;text-align:center;font-weight:900;margin-bottom:10px;background:#111;color:#fff">ЭТОТ ШМОТ УЖЕ СПИЗДИЛИ</div>':'')+'<button class="btn '+(inCart&&!sold?'added':'')+'" style="'+btnExtraStyle+'" onclick="'+btnAction+'">'+btnText+'</button><button onclick="vib();sniff()" style="width:100%;margin-top:8px;padding:12px;border:2.5px dashed #111;border-radius:12px;background:#fff;font-weight:900;color:#111">ПОНЮХАТЬ 👃</button></div>';
+ let tagsLine = (p.tags||[]).length? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0">'+(p.tags||[]).map(t=>'<span style="border:2px solid '+(MODE==='preorder'?'#fff':'#111')+';border-radius:6px;padding:3px 7px;font-size:10px;font-weight:900">'+t+'</span>').join('')+'</div>' : '';
+ document.getElementById('modal').innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid '+(MODE==='preorder'?'#fff':'#111')+'"><b style="font-size:11px;opacity:.6">УЗРИТЕ ЭТОТ ФЛЕЕЕЕЕЕЕКС</b><span onclick="vib();closeAll()" style="font-size:24px;cursor:pointer">✕</span></div><div class="gal">'+gal+'</div><div style="padding:14px"><h2>'+(p.brand||'')+' '+p.name+'</h2>'+tagsLine+'<div style="opacity:.7;margin:6px 0;font-weight:900">'+(p.size||'')+'</div>'+(desc?'<div style="border:2.5px solid '+(MODE==='preorder'?'#fff':'#111')+';border-radius:10px;padding:10px;margin:10px 0;font-size:12px;line-height:1.3;background:'+(MODE==='preorder'?'#111':'#fffaf0')+'"><div style="font-weight:900;margin-bottom:4px">ОПИСАНИЕ ОТ БОМЖА:</div>'+desc+'</div>':'')+'<div style="font-weight:900;font-size:20px;margin:10px 0">'+p.price+'₽</div>'+(sold?'<div style="border:2.5px dashed '+(MODE==='preorder'?'#fff':'#111')+';padding:10px;border-radius:10px;text-align:center;font-weight:900;margin-bottom:10px;background:#111;color:#fff">ЭТОТ ШМОТ УЖЕ СПИЗДИЛИ</div>':'')+'<button class="btn '+(inCart&&!sold?'added':'')+'" style="" onclick="'+btnAction+'">'+btnText+'</button><button onclick="vib();sniff()" style="width:100%;margin-top:8px;padding:12px;border:2.5px dashed '+(MODE==='preorder'?'#fff':'#111')+';border-radius:12px;background:'+(MODE==='preorder'?'#111':'#fff')+';font-weight:900;color:'+(MODE==='preorder'?'#fff':'#111')+'">ПОНЮХАТЬ 👃</button></div>';
  document.getElementById('modal').style.display='block';
  imgs.forEach(async(fid,i)=>{try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('g_'+id+'_'+i);if(el)el.src=jj.url;}catch(e){}});
 }
+
 function sniff(){const frases=["пахнет секондом с Щелчка, чуть потом и победой","пахнет как будто в ней спали 3 бомжа, но стильно","аромат свободы, сигарет и дорогого парфюма за 1200₽","пахнет флексом. чистый флекс.","бля, это же пахнет как твой будущий успех"];let t=frases[Math.floor(Math.random()*frases.length)];document.getElementById('sniffText').innerText=t;document.getElementById('sniffOverlay').style.display='flex';vib();setTimeout(()=>{document.getElementById('sniffOverlay').style.display='none'},1800);}
+
 function addToBox(id){vib();let p=P.find(x=>x.id==id);if(isSoldProduct(p)){ vib('err');toast('СПИЗДИЛИ, САМ ВИНОВАТ 💀'); return; }let was=CART.includes(id);if(was){CART=CART.filter(x=>x!=id);vib('err');}else{CART.push(id);vib('ok');if(CART.length>=3)boom();}save();closeAll();toast(was?'УБРАЛ':'В КОРОБКЕ 📦');let ic=document.getElementById('boxIcon');if(ic){ic.classList.add('jump');setTimeout(()=>ic.classList.remove('jump'),600);}let g=document.getElementById('grid');if(g){g.classList.add('shake');setTimeout(()=>g.classList.remove('shake'),300);}}
+
 function toast(t){let el=document.getElementById('toast');el.innerText=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
+
 function openCart(){vib();renderCart();document.getElementById('cartModal').style.display='block';if(CART.length>=3)boom();}
 function closeAll(){document.getElementById('modal').style.display='none';document.getElementById('cartModal').style.display='none';}
 function getFlex(){let n=CART.length;if(n==0)return{p:0,txt:'БОМЖ 100% / FLEX 0% - пусто'};if(n==1)return{p:35,txt:'БОМЖ 65% / FLEX 35% - норм'};if(n==2)return{p:70,txt:'БОМЖ 30% / FLEX 70% - свежак'};return{p:100,txt:'БОМЖ 0% / FLEX 100% - БОГ СВЕГА 🔥'};}
-function boom(){vib('ok');for(let i=0;i<18;i++){let d=document.createElement('div');d.className='conf';d.style.left=Math.random()*100+'vw';d.style.animationDelay=Math.random()*.3+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),1300);}}
+function boom(){vib('ok');for(let i=0;i<18;i++){let d=document.createElement('div');d.className='conf';d.style.left=Math.random()*100+'vw';d.style.animationDelay=Math.random()*.3+'s';d.style.background=MODE==='preorder'?'#fff':'#111';document.body.appendChild(d);setTimeout(()=>d.remove(),1300);}}
+
 function renderCart(){
  let cm=document.getElementById('cartModal');
  let items=P.filter(p=>CART.includes(p.id));
  let total=items.reduce((s,p)=>s+p.price,0);
  if(DISCOUNT)total=Math.round(total*0.9);
  let flex=getFlex();
+ let borderColor = MODE==='preorder' ? '#fff' : '#111';
  if(!items.length){
-   cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid #111"><b>КОРОБКА</b><span onclick="vib();closeAll()" style="font-size:24px">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px">'+flex.txt+'</div></div><div style="padding:40px;text-align:center;font-weight:900">ПУСТО</div><div style="padding:14px"><div style="border:3px solid #111;border-radius:16px;padding:14px"><div style="font-weight:900;font-size:13px;margin-bottom:12px;text-align:center">ЧТО БУДЕТ ДАЛЬШЕ?</div><div style="display:flex;gap:10px;margin-bottom:10px"><div style="min-width:36px;height:36px;border:2.5px solid #111;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">1</div><div><div style="font-weight:900;font-size:12px">ЖМЕШЬ ОФОРМИТЬ</div><div style="font-size:11px;opacity:.6">Заявка улетает к нам в ТГ</div></div></div><div style="display:flex;gap:10px;margin-bottom:10px"><div style="min-width:36px;height:36px;border:2.5px solid #111;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">2</div><div><div style="font-weight:900;font-size:12px">ПИШЕТ ТИП ИЗ GOOFY</div><div style="font-size:11px;opacity:.6">Уточнит размер / адрес / скидку</div></div></div><div style="display:flex;gap:10px"><div style="min-width:36px;height:36px;border:2.5px solid #111;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900">3</div><div><div style="font-weight:900;font-size:12px">ОТПРАВЛЯЕМ ЗА ДЕНЬ</div><div style="font-size:11px;opacity:.6">СДЭК 300-500₽ / По Салавату фри</div></div></div></div></div>';
+   cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid '+borderColor+'"><b>КОРОБКА</b><span onclick="vib();closeAll()" style="font-size:24px">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px">'+flex.txt+'</div></div><div style="padding:40px;text-align:center;font-weight:900">ПУСТО</div>';
    return;
  }
- cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid #111"><b>КОРОБКА • '+items.length+'</b><span onclick="vib();closeAll()" style="font-size:24px">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR '+(flex.p==100?'🔥':'')+'</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px;font-weight:900">'+flex.txt+'</div></div>'+(DISCOUNT?'<div style="margin:10px;border:2px dashed #111;border-radius:10px;padding:8px;text-align:center;font-weight:900">СКИДКА 10% УКРАДЕНА • GOOFY10</div>':'')+items.map(p=>'<div style="display:flex;gap:10px;border:2px solid #111;border-radius:12px;padding:8px;margin:10px"><img id="c_'+p.id+'" style="width:70px;height:70px;border-radius:8px;border:2px solid #111;object-fit:cover"><div style="flex:1"><div style="font-weight:900">'+p.name+'</div><div>'+p.price+'₽</div></div><div onclick="vib();addToBox('+p.id+');renderCart()" style="font-size:20px;cursor:pointer">✕</div></div>').join('')+'<div style="padding:12px;border-top:3px solid #111;border-bottom:3px solid #111"><div style="display:flex;justify-content:space-between;font-weight:900"><span>ИТОГО '+(DISCOUNT?'-10%':'')+'</span><span>'+total+'₽</span></div><button class="btn" style="margin-top:10px" onclick="vib(\'ok\');checkout()">ОФОРМИТЬ • '+total+'₽</button></div><div style="padding:14px"><div style="border:3px solid #111;border-radius:16px;padding:14px;background:#fff"><div style="font-weight:900;font-size:13px;margin-bottom:12px;text-align:center">ЧТО БУДЕТ ДАЛЬШЕ? 👇</div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="min-width:38px;height:38px;border:2.5px solid #111;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;background:#111;color:#fff">1</div><div><div style="font-weight:900;font-size:13px">ЖМЕШЬ ОФОРМИТЬ</div><div style="font-size:11px;opacity:.6">Заявка улетает в телегу</div></div></div><div style="display:flex;gap:10px;margin-bottom:12px"><div style="min-width:38px;height:38px;border:2.5px solid #111;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900">2</div><div><div style="font-weight:900;font-size:13px">ПИШЕТ ТИП ИЗ GOOFY</div><div style="font-size:11px;opacity:.6">Уточнит размер, адрес</div></div></div><div style="display:flex;gap:10px"><div style="min-width:38px;height:38px;border:2.5px solid #111;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900">3</div><div><div style="font-weight:900;font-size:13px">ОТПРАВЛЯЕМ ЗА ДЕНЬ 📦</div><div style="font-size:11px;opacity:.6">СДЭК 300-500₽ • По Салавату бесплатно</div></div></div></div></div>';
+ cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid '+borderColor+'"><b>КОРОБКА • '+items.length+'</b><span onclick="vib();closeAll()" style="font-size:24px">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR '+(flex.p==100?'🔥':'')+'</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px;font-weight:900">'+flex.txt+'</div></div>'+(DISCOUNT?'<div style="margin:10px;border:2px dashed '+borderColor+';border-radius:10px;padding:8px;text-align:center;font-weight:900">СКИДКА 10% УКРАДЕНА • GOOFY10</div>':'')+items.map(p=>'<div style="display:flex;gap:10px;border:2px solid '+borderColor+';border-radius:12px;padding:8px;margin:10px"><img id="c_'+p.id+'" style="width:70px;height:70px;border-radius:8px;border:2px solid '+borderColor+';object-fit:cover"><div style="flex:1"><div style="font-weight:900">'+p.name+'</div><div>'+p.price+'₽</div></div><div onclick="vib();addToBox('+p.id+');renderCart()" style="font-size:20px;cursor:pointer">✕</div></div>').join('')+'<div style="padding:12px;border-top:3px solid '+borderColor+';border-bottom:3px solid '+borderColor+'"><div style="display:flex;justify-content:space-between;font-weight:900"><span>ИТОГО '+(DISCOUNT?'-10%':'')+'</span><span>'+total+'₽</span></div><button class="btn" style="margin-top:10px" onclick="vib(\'ok\');checkout()">ОФОРМИТЬ • '+total+'₽</button></div>';
  items.forEach(async p=>{let fid=(p.images&&p.images[0])?p.images[0]:p.img;if(!fid)return;try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('c_'+p.id);if(el)el.src=jj.url;}catch(e){}});
 }
-function steal(){vib();STEAL++;if(STEAL>=10&&!DISCOUNT){DISCOUNT=1;STEAL=0;toast('СКИДКА 10% УКРАДЕНА!');boom();}else if(STEAL>3){toast(STEAL+'/10');}}
 
-function getTgUser(){
-  try{
-    // 1. Прямой путь
-    if(tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id){
-      return tg.initDataUnsafe.user;
-    }
-    // 2. Парсим initData строку (самый надежный)
-    if(tg && tg.initData){
-      let params = new URLSearchParams(tg.initData);
-      let userStr = params.get('user');
-      if(userStr){
-        return JSON.parse(userStr);
-      }
-    }
-    // 3. Пробуем из WebApp initDataUnsafe по-другому
-    if(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user){
-      return window.Telegram.WebApp.initDataUnsafe.user;
-    }
-  }catch(e){ console.log('getTgUser error', e); }
-  return null;
-}
+function steal(){vib();STEAL++;if(STEAL>=10&&!DISCOUNT){DISCOUNT=1;STEAL=0;toast('СКИДКА 10% УКРАДЕНА!');boom();}else if(STEAL>3){toast(STEAL+'/10');}}
 
 async function checkout(){
  let items=P.filter(p=>CART.includes(p.id));let total=items.reduce((s,p)=>s+p.price,0);if(DISCOUNT)total=Math.round(total*0.9);
  let u = getTgUser();
- console.log('TG USER:', u, 'initData:', tg ? tg.initData : 'no tg');
- if(!u || !u.id){
-   // последняя попытка - берем из initData вручную
-   try{
-     let search = window.location.search;
-     if(!u && tg && tg.initDataUnsafe && tg.initDataUnsafe.user){
-       u = tg.initDataUnsafe.user;
-     }
-   }catch(e){}
- }
- if(!u){
-   u = {id:0, first_name:"Гость", username:""};
-   // если даже так - все равно пробуем отправить через sendData, бот получит from_user
-   if(tg && tg.sendData){
-     try{
-       tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", via:"sendData_no_user"}));
-       return;
-     }catch(e){}
-   }
- }
- // Если юзер есть - отправляем через sendData (тогда бот 100% получит from_user)
+ if(!u){ u={id:0,first_name:"Гость",username:""}; if(tg&&tg.sendData){try{tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", mode:MODE}));return;}catch(e){}} }
  if(tg && tg.sendData && u && u.id && u.id!=0){
-   try{
-     console.log('Sending via sendData', u);
-     tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", user:u}));
-     return;
-   }catch(e){
-     console.log("sendData fail, fallback to fetch",e);
-   }
+   try{ tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", user:u, mode:MODE})); return; }catch(e){}
  }
- // Fallback - через API
  try{
-  let res=await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", from_id: u.id})});
+  let res=await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", mode:MODE, from_id: u.id})});
   if(res.ok){
    let date = new Date().toLocaleString('ru-RU');
    let list = items.map(p=>'<div style="display:flex;justify-content:space-between;margin:3px 0"><span>'+p.name.slice(0,20)+'</span><span>'+p.price+'₽</span></div>').join('');
-   document.getElementById('cartModal').innerHTML='<div style="padding:20px 12px;text-align:center"><div style="font-size:44px">🧾</div><div class="receipt" style="text-align:left"><div style="text-align:center;font-weight:900;font-size:14px">ООО "GOOFY BOX"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed #111;margin:10px 0"></div>'+list+'<div style="border-top:1px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ПАКЕТ GOOFY CRACK (КРАФТ)</span><span>15₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>НАКЛЕЙКА В ПОДАРОК</span><span>0₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ДОСТАВКА (ПРЕДВАРИТ)</span><span>~400₽</span></div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>ИТОГО ФЛЕКС:</span><span>'+total+'₽</span></div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="text-align:center;font-size:9px;line-height:1.3;opacity:.7">ФЛЕКС НАЧИСЛЕН: +'+Math.round(total/10)+' БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ ПОДЛИННОСТИ:<br><div style="font-size:20px;margin:6px 0">▓▓▓▓ ▓░ ▓▓▓▓<br>░▓░▓ ▓▓▓▓ ░▓░▓<br>▓▓▓▓ ░▓░░ ▓▓▓▓</div>СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI</div></div><button class="btn" style="margin-top:15px" onclick="vib();CART=[];DISCOUNT=0;save();closeAll();load();">ОК, ПОНЯЛ 👌</button></div>';
+   document.getElementById('cartModal').innerHTML='<div style="padding:20px 12px;text-align:center"><div style="font-size:44px">🧾</div><div class="receipt" style="text-align:left"><div style="text-align:center;font-weight:900;font-size:14px">ООО "GOOFY BOX"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed '+borderColor+';margin:10px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>РЕЖИМ: '+(MODE==='preorder'?'ПОД ЗАКАЗ ⏳':'В НАЛИЧИИ ✅')+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed '+borderColor+';margin:10px 0"></div>'+list+'</div><button class="btn" style="margin-top:15px" onclick="vib();CART=[];DISCOUNT=0;save();closeAll();load();">ОК, ПОНЯЛ 👌</button></div>';
    CART=[];save();boom();
   }else{alert('Ошибка');}
  }catch(e){alert('Сеть');}
