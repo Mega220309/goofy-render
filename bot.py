@@ -268,16 +268,13 @@ async def autoclean():
 async def webapp_data(m:Message):
     try:
         raw = json.loads(m.web_app_data.data)
-        # raw can be {items: [...], total, discount, promo} or {cart, promo}
         items_ids = raw.get("items") or raw.get("cart") or raw.get("order") or []
         if isinstance(items_ids, list) and len(items_ids)>0 and isinstance(items_ids[0], dict):
-            # already objects
             items_ids = [x.get("id") or x for x in items_ids]
         total = raw.get("total", 0)
         discount = raw.get("discount", 0)
         promo = raw.get("promo") or ("GOOFY10" if discount else None)
         
-        # get products info
         ps = get_products()
         prods = []
         for pid in items_ids:
@@ -285,31 +282,28 @@ async def webapp_data(m:Message):
             if p:
                 prods.append(p)
         
-        # calc if total not provided
         if not total and prods:
             total = sum(p["price"] for p in prods)
             if discount:
                 total = round(total*0.9)
-            if promo=="GOOFY15":
-                total = round(total*0.85)
 
         user = m.from_user
         username = f"@{user.username}" if user.username else "без юзера"
         name = f"{user.first_name or ''} {user.last_name or ''}".strip() or "Гость"
         
-        # Build pretty message
         lines = []
         lines.append("📦 <b>НОВЫЙ ЗАКАЗ — GOOFY BOX</b>")
         lines.append("")
         lines.append(f"👤 <b>Клиент:</b> {name} {username}")
         lines.append(f"🆔 ID: <code>{user.id}</code>")
-        lines.append(f"🔗 <a href='tg://user?id={user.id}'>Написать клиенту</a>")
+        lines.append(f"🔗 <a href='tg://user?id={user.id}'>Открыть профиль клиента</a>")
+        if user.username:
+            lines.append(f"✉️ <a href='https://t.me/{user.username}'>@{user.username}</a>")
         lines.append("")
         lines.append("🛒 <b>Товары:</b>")
         for i,p in enumerate(prods,1):
             lines.append(f"{i}. <b>{p.get('brand','')} {p.get('name','')}</b>")
             lines.append(f"   Размер: {p.get('size','?')} | Цена: {p.get('price',0)}₽")
-            if p.get('tag'): lines.append(f"   Тэг: {p.get('tag')}")
         if not prods:
             lines.append(f"ID товаров: {items_ids}")
         lines.append("")
@@ -321,9 +315,11 @@ async def webapp_data(m:Message):
         lines.append("")
         lines.append(f"⏰ {time.strftime('%d.%m.%Y %H:%M')}")
 
-        txt = "\n".join(lines)
-        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML")
-        # Also send product photos as album if exists
+        txt = "
+".join(lines)
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+        kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💬 Написать клиенту", url=f"tg://user?id={user.id}")]])
+        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML", reply_markup=kb)
         if prods:
             from aiogram.types import InputMediaPhoto
             media = []
@@ -369,11 +365,11 @@ async def api_file(file_id: str):
 async def api_order(req: Request):
     try:
         data = await req.json()
-        user = data.get("user",{})
+        user = data.get("user",{}) or {}
         items_ids = data.get("items") or data.get("cart") or []
         total = data.get("total",0)
         discount = data.get("discount",0)
-        promo = data.get("promo")
+        promo = data.get("promo") or (f"GOOFY{discount}" if discount else None)
 
         ps = get_products()
         prods = []
@@ -382,20 +378,29 @@ async def api_order(req: Request):
             if p:
                 prods.append(p)
 
-        uid = user.get("id",0)
-        uname = user.get("username")
-        first = user.get("first_name","")
-        last = user.get("last_name","")
-        name = f"{first} {last}".strip() or "Гость"
+        uid = user.get("id",0) or data.get("from_id",0) or 0
+        uname = user.get("username") or ""
+        first = user.get("first_name","") or user.get("firstName","")
+        last = user.get("last_name","") or ""
+        photo_url = user.get("photo_url","")
+
+        name = f"{first} {last}".strip() or user.get("name","") or "Гость"
         username = f"@{uname}" if uname else "без юзера"
 
+        # Build pretty text
         lines = []
-        lines.append("📦 <b>НОВЫЙ ЗАКАЗ — GOOFY BOX (WebApp)</b>")
+        lines.append("📦 <b>НОВЫЙ ЗАКАЗ — GOOFY BOX</b>")
         lines.append("")
-        lines.append(f"👤 <b>Клиент:</b> {name} {username}")
-        lines.append(f"🆔 ID: <code>{uid}</code>")
-        if uid:
-            lines.append(f"🔗 <a href='tg://user?id={uid}'>Написать клиенту</a>")
+        if uid and uid!=0:
+            lines.append(f"👤 <b>Клиент:</b> {name} {username}")
+            lines.append(f"🆔 ID: <code>{uid}</code>")
+            # ссылка работает даже без юзера!
+            lines.append(f"🔗 <a href='tg://user?id={uid}'>Открыть профиль клиента</a>")
+            if uname:
+                lines.append(f"✉️ <a href='https://t.me/{uname}'>@{uname} в ТГ</a>")
+        else:
+            lines.append(f"👤 <b>Клиент:</b> {name} ({username})")
+            lines.append(f"🆔 ID: неизвестен — открыл вне Телеги?")
         lines.append("")
         lines.append("🛒 <b>Товары:</b>")
         for i,p in enumerate(prods,1):
@@ -409,8 +414,16 @@ async def api_order(req: Request):
         else:
             lines.append("🎁 <b>Скидка:</b> нет")
         lines.append(f"⏰ {time.strftime('%d.%m.%Y %H:%M')}")
-        txt = "\n".join(lines)
-        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML")
+        txt = "
+".join(lines)
+
+        # Кнопка Написать клиенту даже без юзера
+        from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+        kb = None
+        if uid and uid!=0:
+            kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="💬 Написать клиенту", url=f"tg://user?id={uid}")]])
+
+        await bot.send_message(ADMIN_ID, txt, parse_mode="HTML", reply_markup=kb)
         if prods:
             from aiogram.types import InputMediaPhoto
             media=[]
@@ -424,6 +437,7 @@ async def api_order(req: Request):
                 except: pass
     except Exception as e:
         print(f"api_order error {e}")
+        import traceback; traceback.print_exc()
     return {"ok": True}
 
 @app.on_event("startup")
