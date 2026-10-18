@@ -40,19 +40,17 @@
 .shake{animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 
-/* TABS - как на скрине */
+/* TABS - ФИНАЛ: активная всегда белая, неактивная черная */
 .tabs{display:flex;gap:0;border-bottom:3.5px solid #111;background:#fff;position:sticky;top:0;z-index:50;transition:all .3s}
-.tab{flex:1;padding:14px 6px;text-align:center;cursor:pointer;border-right:3px solid #111;position:relative;transition:all .25s;user-select:none}
-.tab:last-child{border-right:0}
+.tab{flex:1;padding:14px 6px;text-align:center;cursor:pointer;transition:all .25s;user-select:none;border:3px solid #111}
+.tab:last-child{margin-left:-3px}
 .tab .big{font-weight:900;font-size:15px;line-height:1.1;letter-spacing:-0.5px;display:block}
 .tab .small{font-weight:700;font-size:10px;opacity:.8;margin-top:2px;display:block}
-/* В НАЛИЧИИ - белый фон черный текст когда активна */
-.tab#tabStock{background:#fff;color:#111;border:3px solid #111}
-.tab#tabStock.active{background:#fff;color:#111;border:3px solid #111;z-index:2}
-/* ПОД ЗАКАЗ - черный фон белый текст когда не активна, белая когда активна */
-.tab#tabPreorder{background:#111;color:#fff;border:3px solid #111}
-.tab#tabPreorder.active{background:#fff;color:#111;border:3px solid #111;z-index:2}
-.tab#tabPreorder:not(.active) .small{opacity:.7}
+.tab.active{background:#fff;color:#111;z-index:2}
+.tab:not(.active){background:#111;color:#fff}
+.tab:not(.active) .small{opacity:.7}
+
+
 
 
 /* DARK MODE */
@@ -60,12 +58,10 @@ body.dark{background:#0a0a0a;color:#fff}
 body.dark .wrap{background:#0a0a0a}
 body.dark .banner-wrap{border-bottom-color:#fff}
 body.dark .tabs{background:#0a0a0a;border-bottom-color:#fff}
-body.dark .tab#tabStock{background:#0a0a0a;color:#fff;border-color:#fff;opacity:0.7}
-body.dark .tab#tabStock.active{background:#fff;color:#111;opacity:1}
-body.dark .tab#tabPreorder{background:#fff;color:#111;border-color:#fff;opacity:1}
-body.dark .tab#tabPreorder.active{background:#111;color:#fff;border-color:#fff}
-body.dark .tab#tabPreorder:not(.active){background:#fff;color:#111}
-body.dark .tab#tabPreorder.active{background:#111;color:#fff}
+body.dark .tab.active{background:#fff;color:#111}
+body.dark .tab:not(.active){background:#111;color:#fff;border-color:#fff}
+body.dark .tab{border-color:#fff}
+body.dark .tab{border-color:#fff}
 body.dark .head{border-bottom-color:#fff;color:#fff}
 body.dark .card{background:#111;border-color:#fff;color:#fff}
 body.dark .price{background:#fff;color:#111}
@@ -161,7 +157,7 @@ function switchMode(m){
     document.getElementById('catalogHead').innerText='В НАЛИЧИИ • ТУТ И СЕЙЧАС';
   }
   load();
-  if(m==='preorder'){ for(let i=0;i<12;i++){let d=document.createElement('div');d.className='conf';d.style.left=Math.random()*100+'vw';d.style.background='#fff';document.body.appendChild(d);setTimeout(()=>d.remove(),1200);} }
+  
 }
 
 function isSoldProduct(p){ return!p || p.sold || p.is_sold || p.stock===0 || p.quantity===0 || p.available===false; }
@@ -264,32 +260,45 @@ function renderCart(){
    cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid '+borderC+'"><b>КОРОБКА</b><span onclick="vib();closeAll()" style="font-size:24px;cursor:pointer">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px">'+flex.txt+'</div></div><div style="padding:40px;text-align:center;font-weight:900">ПУСТО</div>';
    return;
  }
- let stepsHtml = '<div class="steps" style="padding:16px"><div style="font-weight:900;margin-bottom:14px;text-align:center;font-size:13px">ЧТО БУДЕТ ДАЛЬШЕ? 👇</div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">1</div><div><div style="font-weight:900;font-size:13px">ЖМЕШЬ ОФОРМИТЬ</div><div style="font-size:11px;opacity:.6;margin-top:2px">Заявка улетает к нам в телегу</div></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">2</div><div><div style="font-weight:900;font-size:13px">ПИШЕТ ТИП ИЗ GOOFY</div><div style="font-size:11px;opacity:.6;margin-top:2px">Уточнит размер, адрес, скидку</div></div></div><div style="display:flex;gap:12px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">3</div><div><div style="font-weight:900;font-size:13px">ОТПРАВЛЯЕМ ЗА ДЕНЬ 📦</div></div></div></div>';
+ let stepsHtml = '<div class="steps" style="padding:16px"><div style="font-weight:900;margin-bottom:14px;text-align:center;font-size:13px">ЧТО БУДЕТ ДАЛЬШЕ? 👇</div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;background:#111;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">1</div><div><div style="font-weight:900;font-size:13px">ЖМЕШЬ ОФОРМИТЬ</div><div style="font-size:11px;opacity:.6;margin-top:2px">Заявка улетает к нам в телегу</div></div></div><div style="display:flex;gap:12px;margin-bottom:14px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">2</div><div><div style="font-weight:900;font-size:13px">ПИШЕТ ТИП ИЗ GOOFY</div><div style="font-size:11px;opacity:.6;margin-top:2px">Уточнит размер, адрес, скидку</div></div></div><div style="display:flex;gap:12px;align-items:flex-start"><div style="min-width:42px;height:42px;border-radius:12px;border:2.5px solid #111;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px">3</div><div><div style="font-weight:900;font-size:13px">ОТПРАВЛЯЕМ ЗА ДЕНЬ 📦</div><div style="font-size:10px;opacity:.6;margin-top:6px;line-height:1.4">ЛЮБОЙ ТРАНСПОРТНОЙ КОМПАНИЕЙ:<br><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">СДЭК</span><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">BOXBERRY</span><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">ЯНДЕКС</span><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">ПОЧТА РОССИИ</span><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">DPD</span><span style="border:1.5px solid #111;border-radius:6px;padding:2px 5px;margin:2px;display:inline-block">5POST</span></div></div></div></div>';
  cm.innerHTML='<div style="padding:12px;display:flex;justify-content:space-between;border-bottom:3px solid '+borderC+'"><b>КОРОБКА • '+items.length+'</b><span onclick="vib();closeAll()" style="font-size:24px;cursor:pointer">✕</span></div><div class="flex"><div style="display:flex;justify-content:space-between;font-weight:900"><span>FLEX METR '+(flex.p==100?'🔥':'')+'</span><span>'+flex.p+'%</span></div><div class="bar"><div class="fill" style="width:'+flex.p+'%"></div></div><div style="font-size:10px;margin-top:4px;font-weight:900">'+flex.txt+'</div></div>'+(DISCOUNT?'<div style="margin:10px;border:2px dashed '+borderC+';border-radius:10px;padding:8px;text-align:center;font-weight:900">СКИДКА 10% УКРАДЕНА • GOOFY10 — -'+(origTotal-total)+'₽</div>':'')+items.map(p=>'<div style="display:flex;gap:10px;border:2px solid '+borderC+';border-radius:12px;padding:8px;margin:10px"><img id="c_'+p.id+'" style="width:70px;height:70px;border-radius:8px;border:2px solid '+borderC+';object-fit:cover"><div style="flex:1"><div style="font-weight:900">'+p.name+'</div><div style="font-size:10px;opacity:.6">'+(p.brand||'')+' • '+p.size+'</div><div style="font-weight:900">'+p.price+'₽</div></div><div onclick="vib();addToBox('+p.id+');renderCart()" style="font-size:20px;cursor:pointer">✕</div></div>').join('')+'<div style="padding:12px;border-top:3px solid '+borderC+';border-bottom:3px solid '+borderC+'"><div style="display:flex;justify-content:space-between;font-weight:900"><span>ИТОГО '+(DISCOUNT?'-10%':'')+'</span><span>'+total+'₽</span></div><button class="btn" style="margin-top:10px" onclick="vib(\'ok\');checkout()">ОФОРМИТЬ • '+total+'₽</button></div>'+stepsHtml;
  items.forEach(async p=>{let fid=(p.images&&p.images[0])?p.images[0]:p.img;if(!fid)return;try{let rr=await fetch('/api/file/'+fid);let jj=await rr.json();let el=document.getElementById('c_'+p.id);if(el)el.src=jj.url;}catch(e){}});
 }
 
 function steal(){vib();STEAL++;if(STEAL>=10&&!DISCOUNT){DISCOUNT=1;STEAL=0;toast('СКИДКА 10% УКРАДЕНА! GOOFY10');boom();}else if(STEAL>3){toast(STEAL+'/10 до скидки');}}
 
+
 async function checkout(){
  let items=P.filter(p=>CART.includes(p.id));let total=items.reduce((s,p)=>s+p.price,0);if(DISCOUNT)total=Math.round(total*0.9);
  let u = getTgUser();
- if(!u){ u={id:0,first_name:"Гость",username:""}; if(tg&&tg.sendData){try{tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", mode:MODE}));return;}catch(e){}} }
- if(tg && tg.sendData && u && u.id && u.id!=0){
-   try{ tg.sendData(JSON.stringify({items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", user:u, mode:MODE})); return; }catch(e){}
- }
+ let modeLine = MODE==='preorder' ? 'ПОД ЗАКАЗ • ЖДИ КАК ХАТИКО' : 'В НАЛИЧИИ • ТУТ И СЕЙЧАС';
+ let date = new Date().toLocaleString('ru-RU');
+ let borderC = '#111';
+ let list = items.map(p=>'<div style="display:flex;justify-content:space-between;margin:4px 0"><span>'+(p.brand||'')+' '+p.name.slice(0,18)+'</span><span>'+p.price+'₽</span></div>').join('');
+ // показываем чек как на фото 1 в 1
+ let receiptHtml = '<div style="padding:20px 12px;text-align:center;background:#fff;color:#111"><div style="font-size:10px;font-weight:900;border:1px solid #111;display:inline-block;padding:4px 8px">RECEIPT<br><span style="font-size:7px;opacity:.5">JUL 17<br>MISFITS...........0.00<br>SQUARE...........0.00<br>PEGS.............0.00<br>ROUND............0.00<br>HOLES............0.00</span></div><div style="border:3px dashed #111;padding:14px;margin:14px 0;border-radius:4px;text-align:left;background:#fff"><div style="text-align:center;font-weight:900;font-size:14px;line-height:1.1">ООО "GOOFY BOX"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed #111;margin:10px 0"></div>'+list+'<div style="border-top:1px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ПАКЕТ GOOFY CRACK (КРАФТ)</span><span>15₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>НАКЛЕЙКА В ПОДАРОК</span><span>0₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ДОСТАВКА (ПРЕДВАРИТ)</span><span>~400₽</span></div><div style="border-top:2px dashed #111;margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>ИТОГО ФЛЕКС:</span><span>'+total+'₽</span></div><div style="border-top:2px dashed #111;margin:12px 0"></div><div style="text-align:center;font-size:9px;line-height:1.3;opacity:.7">ФЛЕКС НАЧИСЛЕН: +'+Math.round(total/10)+' БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ ПОДЛИННОСТИ:<br><div style="font-size:18px;margin:8px 0;line-height:0.9">▓▓▓▓ ░▓ ▓▓▓▓<br>░▓░▓ ▓▓▓▓ ░▓░▓<br>▓▓▓▓ ░▓░░ ▓▓▓▓</div>СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI</div></div><button class="btn" style="margin-top:15px;background:#111;color:#fff;border-color:#111" onclick="vib();CART=[];DISCOUNT=0;save();closeAll();load();">ОК, ПОНЯЛ 👌</button></div>';
+
+ // показываем чек сразу
+ document.getElementById('cartModal').innerHTML = receiptHtml;
+ boom();
+ CART=[];save();
+
+ // потом отправляем заказ в телегу
  try{
-  let res=await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,items:CART,total,discount:DISCOUNT?10:0,promo:DISCOUNT?"GOOFY10":"", mode:MODE, from_id: u.id})});
-  if(res.ok){
-   let date = new Date().toLocaleString('ru-RU');
-   let borderC = MODE==='preorder' ? '#fff' : '#111';
-   let list = items.map(p=>'<div style="display:flex;justify-content:space-between;margin:4px 0"><span>'+(p.brand||'')+' '+p.name.slice(0,18)+'</span><span>'+p.price+'₽</span></div>').join('');
-   let modeLine = MODE==='preorder' ? 'ПОД ЗАКАЗ ⏳' : 'В НАЛИЧИИ ✅';
-   document.getElementById('cartModal').innerHTML='<div style="padding:20px 12px;text-align:center"><div style="font-size:44px">🧾</div><div class="receipt" style="text-align:left"><div style="text-align:center;font-weight:900;font-size:14px">ООО "GOOFY BOX"<br>СПАСИБО ЗА ПОКУПКУ, БРОДЯГА</div><div style="border-top:2px dashed '+borderC+';margin:10px 0"></div><div style="font-size:11px;line-height:1.4">КАССА: #666 КАССИР: БОМЖ С ЩЕЛЧКА<br>ДАТА: '+date+'<br>РЕЖИМ: '+modeLine+'<br>ТОЧКА: ТЦ ГОРОД, САЛАВАТ</div><div style="border-top:1px dashed '+borderC+';margin:10px 0"></div>'+list+'<div style="border-top:1px dashed '+borderC+';margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ПАКЕТ GOOFY CRACK (КРАФТ)</span><span>15₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>НАКЛЕЙКА В ПОДАРОК</span><span>0₽</span></div><div style="display:flex;justify-content:space-between;font-size:11px"><span>ДОСТАВКА (ПРЕДВАРИТ)</span><span>~400₽</span></div><div style="border-top:2px dashed '+borderC+';margin:10px 0"></div><div style="display:flex;justify-content:space-between;font-weight:900;font-size:14px"><span>ИТОГО ФЛЕКС:</span><span>'+total+'₽</span></div><div style="border-top:2px dashed '+borderC+';margin:10px 0"></div><div style="text-align:center;font-size:9px;line-height:1.3;opacity:.7">ФЛЕКС НАЧИСЛЕН: +'+Math.round(total/10)+' БАЛЛОВ<br>QR-КОД ДЛЯ ПРОВЕРКИ ПОДЛИННОСТИ:<br><div style="font-size:20px;margin:6px 0">▓▓▓▓ ▓░ ▓▓▓▓<br>░▓░▓ ▓▓▓▓ ░▓░▓<br>▓▓▓▓ ░▓░░ ▓▓▓▓</div>СОХРАНИ ЧЕК, БРОДЯГА<br>ВОЗВРАТ 14 ДНЕЙ • NOSI POKA NE UKRALI<br><br>МЫ НАПИШЕМ ТЕБЕ В ТЕЛЕГУ!</div></div><button class="btn" style="margin-top:15px" onclick="vib();CART=[];DISCOUNT=0;save();closeAll();load();">ОК, ПОНЯЛ 👌</button></div>';
-   CART=[];save();boom();
-  }else{alert('Ошибка');}
- }catch(e){alert('Сеть');}
+   let sendData = {items:CART.length?CART:items.map(p=>p.id), total:total, discount:DISCOUNT?10:0, promo:DISCOUNT?"GOOFY10":"", mode:MODE, user:u};
+   // if u is null, try get from init
+   if(!u || !u.id){
+     u={id:0,first_name:"Гость",username:""};
+   }
+   sendData.user = u;
+   sendData.from_id = u.id;
+   if(tg && tg.sendData){
+     setTimeout(()=>{ try{ tg.sendData(JSON.stringify(sendData)); }catch(e){} }, 500);
+   }
+   await fetch('/api/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sendData)});
+ }catch(e){ console.log(e); }
 }
+
 
 let stealthTimer;
 function resetStealth(){clearTimeout(stealthTimer);document.getElementById('stealthOverlay').style.display='none';stealthTimer=setTimeout(()=>{document.getElementById('stealthOverlay').style.display='flex';},60000);}
